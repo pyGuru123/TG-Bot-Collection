@@ -32,7 +32,7 @@ function reply(text){
       return wolframalpha(text);
     }
     catch (error) {
-      return ["text", "unable to process your query. Try Something else!"]
+      return ["text", "Ask this question to gpt instead!"]
     }
     
   }
