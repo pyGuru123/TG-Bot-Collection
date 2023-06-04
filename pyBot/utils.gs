@@ -4,7 +4,7 @@ const ipReset = {
 
 const requests = {}
 
-const allowedChats = [-1005654564564, 70467567];
+const allowedChats = [-1001439600000, 704640000];
 
 function processCommand(text, command) {
   var processedText = text.substring(command.length).trim();
@@ -18,15 +18,20 @@ function reply(text){
   if (text.startsWith('/gpt')) {
     text = processCommand(text, '/gpt');
     if (text.replace(/\s/g, '') == "") {
-      return ["text", "Enter prompt to search ChatGPT"]
+      return ["text", "Enter prompt to search ChatGPT. Ex:\n/gpt write a poem in cat language 4 lines"]
     }
-    return searchGPT(text);
+    try{
+      return searchGPT(text);
+    }
+    catch (error) {
+      return ["text", "Failed. Try asking the same question again."]
+    }
   }
 
   else if (text.startsWith('/q')) {
     text = processCommand(text, '/q');
     if (text.replace(/\s/g, '') == "") {
-      return ["text", "Ask a question"]
+      return ["text", "Ask a question. Ex:\n/q How many moons solar system have?"]
     }
     try {
       return wolframalpha(text);
