@@ -2,7 +2,7 @@ const ipReset = {
   reset : false
 }
 
-const allowedChats = [-1001439604894, 704647574];
+const allowedChats = [-1001439600000, 704640000];
 
 function processCommand(text, command) {
   var processedText = text.substring(command.length).trim();

@@ -34,10 +34,3 @@ function execute_python(code) {
   var output = output[output.length-2]
   return ["text", output.trimStart()];
 }
-
-function testCode() {
-  var python_code = `
-# Your Python code goes here
-print("hello world")`
-  execute_python(python_code)
-}
