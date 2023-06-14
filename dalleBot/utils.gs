@@ -2,14 +2,14 @@ const ipReset = {
   reset : false
 }
 
-const allowedChats = [-1001439600000, 704640000];
+const allowedChats = [-1001439604894, 704647574];
 
 function processCommand(text, command) {
   var processedText = text.substring(command.length).trim();
-  if (processedText.includes("/@pygurutBot")) {
+  if (processedText.includes("@pyguruttBot")) {
       var processedText = processedText.substring('/@pygurutBot'.length).trim();
   }
-  return processedText.trim();
+  return processedText
 }
 
 function reply(text, chat_id, reply_id){

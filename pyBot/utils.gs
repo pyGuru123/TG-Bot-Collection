@@ -18,13 +18,40 @@ function reply(text){
   if (text.startsWith('/gpt')) {
     text = processCommand(text, '/gpt');
     if (text.replace(/\s/g, '') == "") {
-      return ["text", "Enter prompt to search ChatGPT. Ex:\n/gpt write a poem in cat language 4 lines"]
+      return ["text", "Enter prompt to search ChatGPT. Ex:\n/gpt tell me a cat joke"]
     }
     try{
       return searchGPT(text);
     }
     catch (error) {
       return ["text", "Failed. Try asking the same question again."]
+    }
+  }
+
+  else if (text.startsWith('/claude')) {
+    text = processCommand(text, '/claude');
+    if (text.replace(/\s/g, '') == "") {
+      return ["text", "Enter prompt to search Claude. Ex:\n/claude write a 4 line poem in cat language"]
+    }
+    try{
+      return searchClaude(text);
+    }
+    catch (error) {
+      return ["text", "Failed. Try asking this question to gpt."]
+    }
+  }
+
+  else if (text.startsWith('/bard')) {
+    text = processCommand(text, '/bard');
+    if (text.replace(/\s/g, '') == "") {
+      return ["text", "Enter prompt to search Bard. Ex:\n/bard write a short story on a cat."]
+    }
+    try{
+      return searchBard(text);
+    }
+    catch (error) {
+      Logger.log(error);
+      return ["text", "Failed. Try asking this question to gpt."]
     }
   }
 

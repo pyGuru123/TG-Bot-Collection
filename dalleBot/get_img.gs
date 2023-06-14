@@ -23,15 +23,22 @@ function generateImage(prompt) {
   };
 
     if (ipReset.reset == false) {
-      var resetresponse = UrlFetchApp.fetch(gptIPResetEndpoint, resetOptions);
-      ipReset.reset = true;
+        var resetresponse = UrlFetchApp.fetch(gptIPResetEndpoint, resetOptions);
+        ipReset.reset = true;
     }
     var response = JSON.parse(UrlFetchApp.fetch(dalleEndpoint, options));
     try {
         return ["url", response["data"][0]["url"]];
     }
     catch (error) {
-      return ["text", response];
+        UrlFetchApp.fetch(gptIPResetEndpoint, resetOptions);
+        var response = JSON.parse(UrlFetchApp.fetch(dalleEndpoint, options));
+        try {
+          return ["url", response["data"][0]["url"]];
+        }
+        catch(error) {
+          return ["text", response];
+        }
     }
 }
 

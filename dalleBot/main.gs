@@ -1,4 +1,4 @@
-const webhookUrl = "https://script.google.com/macros/s/AKfycbzBM-XUmHPhyAR-2XQGK87oCQvs-.......................................Q/exec";
+const webhookUrl = "https://script.google.com/macros/s/AKfycbxX9QIu**********************************************eIMuMQA/exec";
 
 function setTelegramWebhook() {
   var url = setWebhookEndpoint + webhookUrl;
