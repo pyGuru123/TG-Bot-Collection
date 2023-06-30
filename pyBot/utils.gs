@@ -4,11 +4,11 @@ const ipReset = {
 
 const requests = {}
 
-const allowedChats = [-1001439600000, 704640000];
+const allowedChats = [-1001439600000, 704600000];
 
 function processCommand(text, command) {
   var processedText = text.substring(command.length).trim();
-  if (processedText.includes("/@pygurutBot")) {
+  if (processedText.includes("@pygurutBot")) {
       var processedText = processedText.substring('/@pygurutBot'.length).trim();
   }
   return processedText
@@ -21,7 +21,12 @@ function reply(text){
       return ["text", "Enter prompt to search ChatGPT. Ex:\n/gpt tell me a cat joke"]
     }
     try{
-      return searchGPT(text);
+      var response = searchGPT(text);
+      if (response.includes("python") && response.includes("```")) {
+        return ["code", response[1]];
+      }
+
+      return response;
     }
     catch (error) {
       return ["text", "Failed. Try asking the same question again."]
@@ -42,10 +47,10 @@ function reply(text){
   }
 
   else if (text.startsWith('/bard')) {
-    text = processCommand(text, '/bard');
     if (text.replace(/\s/g, '') == "") {
-      return ["text", "Enter prompt to search Bard. Ex:\n/bard write a short story on a cat."]
+      return ["text", "Enter prompt to search Bard. Ex:\n/bard why does cats meow?"]
     }
+
     try{
       return searchBard(text);
     }
@@ -55,24 +60,47 @@ function reply(text){
     }
   }
 
-  else if (text.startsWith('/q')) {
-    text = processCommand(text, '/q');
+  else if (text.startsWith('/runpy')) {
+    var text = processCommand(text, '/runpy');
     if (text.replace(/\s/g, '') == "") {
-      return ["text", "Ask a question. Ex:\n/q How many moons solar system have?"]
+      return ["text", "write some python code to execute"]
     }
-    try {
-      return wolframalpha(text);
-    }
-    catch (error) {
-      return ["text", "Ask this question to gpt instead!"]
-    }
-    
+    var text = text.replace(/\u00A0/g, ' ');
+    return ["output", `${execute(text)}`];
   }
 
-  else if (text.startsWith('/runpy')) {
-    var processedText = text.substring('/runpy'.length).trim();
-    var input = processedText.replace(/\u00A0/g, ' ');
-    return execute_python(input.trim("\n"));
+  else if (text.startsWith('/plot')) {
+    var text = processCommand(text, '/plot');
+    if (text.replace(/\s/g, '') == "") {
+      return ["text", "write some graph code (numpy&matplotlib) to plot"]
+    }
+    var text = text.replace(/\u00A0/g, ' ');
+    var response =  plot_graph(text);
+    return response;
+  }
+
+  if (text.startsWith("/render")) {
+    text = processCommand(text, "/render");
+    if (text.replace(/\s/g, '') == "") {
+      return ["text", "Write some python code to render. Ex:\n/render print('hello world')"]
+    }
+
+    var regex = /--\S+/g;
+    var match = regex.exec(text) 
+    if (match) {
+        var theme = match[0];
+        var code = text.replace(theme, "");
+    }
+    else {
+        var theme = "dark-plus";
+        var code = text;
+    }
+    
+    return render_code(code, theme.replace("--",""));
+  }
+
+  else if (text.startsWith('/themes')){
+    return get_themes();
   }
 
   else if (text.startsWith('/cat')){
@@ -80,6 +108,8 @@ function reply(text){
   }
 
   else if (text.startsWith('/about')) {
-    return ["text", "pyBot is the official bot for @pyguru channel and is created by @itspyguru."]
+    return ["text", about_text]
   }
+
+  return ["", ""];
 }
