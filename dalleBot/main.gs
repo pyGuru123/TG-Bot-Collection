@@ -1,4 +1,4 @@
-const webhookUrl = "https://script.google.com/macros/s/AKfycbxX9QIu**********************************************eIMuMQA/exec";
+const webhookUrl = "https://script.google.com/macros/s/AKfycbwgElODk************************************/exec";
 
 function setTelegramWebhook() {
   var url = setWebhookEndpoint + webhookUrl;
@@ -10,10 +10,6 @@ function deleteTelegramWebhook() {
   var response = UrlFetchApp.fetch(delWebhookEndpoint);
   Logger.log(response.getContentText());
 }
-
-function doGet(e) {
-  return HtmlService.createHtmlOutput("Hello" + JSON.stringify(e));
-};
 
 function sendMsg(chat_id, msg, reply_id) {
   var options = {
@@ -30,7 +26,23 @@ function sendMsg(chat_id, msg, reply_id) {
   Logger.log(response.getContentText());
 }
 
-function sendPhoto(chat_id, url, reply_id) {
+function sendImaginePhoto(chat_id, photo, reply_id, caption="") {
+  var options = {
+    "method": "post",
+    "muteHttpExceptions": true,
+    "payload": {
+      "chat_id": `${chat_id}`,
+      'photo':photo,
+      "reply_to_message_id": reply_id,
+      "caption": caption
+   }
+  };
+
+    var response = UrlFetchApp.fetch(sendPhotoEndpoint, options);
+    Logger.log(response.getContentText())
+}
+
+function sendPhoto(chat_id, url, reply_id, caption="") {
   var options = {
     "method": "post",
     "contentType": "application/json",
@@ -38,12 +50,12 @@ function sendPhoto(chat_id, url, reply_id) {
       "chat_id": chat_id,
       'photo': url,
       "reply_to_message_id": reply_id,
+      "caption": caption
     }),
   };
 
   var response = JSON.parse(UrlFetchApp.fetch(sendPhotoEndpoint, options));
-  Logger.log(response);
-  return response;
+  return response
 }
 
 function deleteMsg(chat_id, msg_id) {
@@ -59,11 +71,6 @@ function deleteMsg(chat_id, msg_id) {
   UrlFetchApp.fetch(delMsgEndpoint, options);
 }
 
-function sendMail(content) {
-  var message = JSON.stringify(content, null, 4);
-  GmailApp.sendEmail(Session.getEffectiveUser().getEmail(), "Telegram Bot Update " + chat_id, message);
-}
-
 function reply_to_bot(content) {
   var chat_id = content.message.chat.id;
   var text = content.message.text;
@@ -71,15 +78,16 @@ function reply_to_bot(content) {
 
   if (allowedChats.includes(chat_id)) {
       var response = reply(text, chat_id, reply_id);
+
       if (response[0] == "text") {
-        sendPhoto(chat_id, "https://http.cat/400.jpg", reply_id)
-        sendMsg(allowedChats[1], response[1], 31);
-      }
-      else if (response[0] == "info") {
+        // sendPhoto(chat_id, "https://http.cat/400.jpg", reply_id, caption=response[1])
         sendMsg(chat_id, response[1], reply_id);
       }
       else if (response[0] == "url") {
         sendPhoto(chat_id, response[1], reply_id); 
+      }
+      else if (response[0] == "content") {
+        sendImaginePhoto(chat_id, response[1], reply_id)
       }
   }
   else {
@@ -87,7 +95,22 @@ function reply_to_bot(content) {
   }
 }
 
+function update_id(update_id){
+  url = deleteUpdatesEndpoint + update_id.toString();
+  response = JSON.parse(UrlFetchApp.fetch(deleteUpdatesEndpoint));
+  return response;
+}
+
 function doPost(e) {
-  var content = JSON.parse(e.postData.contents);
-  reply_to_bot(content); 
+
+  try {
+    var content = JSON.parse(e.postData.contents);
+    Logger.log(update_id(content.update_id + 1));
+    reply_to_bot(content);
+  }
+  catch(e) {
+    Logger.log("Error: " + error);
+    Logger.log(update_id(content.update_id + 1));
+    sendMsg(allowedChats[1], JSON.stringify(e), -1);
+  }
 }
