@@ -17,18 +17,19 @@ function random_pic() {
 
 function post_image() {
   var imageUrl = random_pic();
-  var botToken = "6290082613:AAGV48uxncvbpnYpMg......................";
+  var botToken = "6088668525:AAEtUyhHsaW*************************";
   var apiUrl = 'https://api.telegram.org/bot' + botToken + '/sendPhoto';
 
   
-  var chatIDS = ["-1001932250000", "-1001439600000"];
+  var chatIDS = ["-1001932200000", "-1001439600000", "-1001917800000"];
   for (var i=0; i <chatIDS.length; i++) {
     var chatId = chatIDS[i];
 
     var payload = {
     'chat_id': chatId,
     'photo': imageUrl,
-    'caption' : "Har Har Mahadev 🕉️"
+    'caption' : "*ॐ नमः शिवाय 🕉️*",
+    "parse_mode": "MarkdownV2"
     };
 
     var options = {
