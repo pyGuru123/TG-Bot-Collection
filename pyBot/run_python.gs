@@ -11,6 +11,7 @@ function execute(code) {
   };
 
   var response = JSON.parse(UrlFetchApp.fetch(coderunnerEndpoint, inputOptions));
+  Logger.log(response);
   try {
       return response.output;
   }
@@ -43,6 +44,31 @@ function plot_graph(code) {
     catch(e) {
       return ["text", e]
     }
+  }
+}
+
+
+function paste_code(code, title) {
+  var payload = {
+    "code" : code,
+    "title": title
+  };
+
+  var inputOptions = {
+    "method": "post",
+    "contentType": "application/json",
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
+
+  Logger.log(inputOptions);
+
+  var response = JSON.parse(UrlFetchApp.fetch(pasteEndpoint, inputOptions));
+  try {
+    return ["paste", response.output];
+  }
+  catch(e) {
+    return ["text", str(e)];
   }
 }
 
